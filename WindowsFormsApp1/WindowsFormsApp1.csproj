@@ -83,7 +83,6 @@
     <Compile Include="Logic\UtilityRepository.cs" />
     <Compile Include="Models\AnalyzeResult.cs" />
     <Compile Include="Models\Enumerations.cs" />
-    <Compile Include="Models\FixedFloorPost.cs" />
     <Compile Include="Models\Post.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

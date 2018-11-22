@@ -12,7 +12,7 @@ namespace WindowsFormsApp1.Logic
     {
         public Forum163Repository(): base()
         {
-            _pagesToCrawl = 2;
+            _pagesToCrawl = 10;
 
             DataFilePath = @"E:\Test\163Posts.csv";
             _urlPrefix = @"http://stzb.16163.com/forum-566-";

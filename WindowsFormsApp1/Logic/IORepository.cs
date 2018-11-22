@@ -13,8 +13,6 @@ namespace WindowsFormsApp1.Logic
     {
         public IORepository()
         {
-            //StreamReader streamReader = new StreamReader(@"C:\Users\yliuab\source\repos\WindowsFormsApp1\Files");
-            //StreamWriter streamWriter = new StreamWriter(@"C:\Users\yliuab\source\repos\WindowsFormsApp1\Files\titles.csv");
         }
 
         public void WriteCsvFile<T>(List<T> content, string path)

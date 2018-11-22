@@ -15,8 +15,6 @@ namespace WindowsFormsApp1.Logic
     {
         public Forum SelectedForum;
 
-        //public string DataFilePath { get; set; } = "";
-
         public int Progress
         {
             get
@@ -66,6 +64,10 @@ namespace WindowsFormsApp1.Logic
             AnalyzeKeywords(_selectedRepository.DataFilePath);
         }
 
+        /// <summary>
+        /// Get keywords that contains 2-4 characters
+        /// </summary>
+        /// <param name="dataPath"></param>
         private void AnalyzeKeywords(string dataPath)
         {
             List<Post> posts = new IORepository().ReadCsvFile(dataPath);

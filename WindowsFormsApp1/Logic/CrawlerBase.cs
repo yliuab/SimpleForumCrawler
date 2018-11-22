@@ -72,6 +72,7 @@ namespace WindowsFormsApp1.Logic
             _pageId = 1;
             Console.WriteLine("============ Start crawling page " + _pageId);
             _isCompleted = false;
+            // Crawl first page and get subjects
             new AbotRepository().CrawWebPage(GetCurrentUrl(), new OnCompleteCallbackDelegate(this.OnCompleteSubjectsCallback), _pageId);
         }
 
@@ -85,6 +86,7 @@ namespace WindowsFormsApp1.Logic
             {
                 if (!string.IsNullOrWhiteSpace(p.Link))
                 {
+                    // Crawl first page for each subjects
                     new AbotRepository().CrawWebPage(p.Link, new OnCompleteCallbackDelegate(this.OnCompleteContentsCallback), p.Id);
                 }
             }
@@ -108,6 +110,34 @@ namespace WindowsFormsApp1.Logic
             return posts;
         }
 
+        public virtual void OnCompleteContentsCallback(decimal postId, string webContentText)
+        {
+            Post post = _allPosts.FirstOrDefault(p => p.Id == postId);
+            List<string> contents = GetContentsFromWebText(webContentText);
+            for (int i = 0; i < contents.Count; i++)
+            {
+                post.Floors.Add(contents.ElementAt(i));
+            }
+            post.SetContentFromFloors();
+            _completedPosts++;
+            if (_completedPosts == _allPosts.Count)
+            {// if this is the last post in this page
+                _completedPages++;
+                if (_completedPages >= _pagesToCrawl)
+                {// finish condition
+                    Console.WriteLine("============ Crawling Forum completed");
+                    PostCompleteTask();
+                }
+                else
+                {
+                    // Crawl next page of subjects
+                    _pageId++;
+                    Console.WriteLine("============ Start crawling page " + _pageId);
+                    new AbotRepository().CrawWebPage(GetCurrentUrl(), new OnCompleteCallbackDelegate(this.OnCompleteSubjectsCallback), _pageId);
+                }
+            }
+        }
+
         public virtual List<string> GetContentsFromWebText(string webContentText)
         {
             List<string> contents = new List<string>();
@@ -124,34 +154,6 @@ namespace WindowsFormsApp1.Logic
                 contents.Add(filtered);
             }
             return contents;
-        }
-
-        public virtual void OnCompleteContentsCallback(decimal postId, string webContentText)
-        {
-            Post post = _allPosts.FirstOrDefault(p => p.Id == postId);
-            List<string> contents = GetContentsFromWebText(webContentText);
-            for (int i = 0; i < contents.Count; i++)
-            {
-                post.Floors.Add(contents.ElementAt(i));
-            }
-            post.SetContentFromFloors();
-            _completedPosts++;
-            if (_completedPosts == _allPosts.Count)
-            {
-                _completedPages++;
-                if (_completedPages >= _pagesToCrawl)
-                {
-                    Console.WriteLine("============ Crawling Forum completed");
-                    PostCompleteTask();
-                }
-                else
-                {
-                    // Crawl next page
-                    _pageId++;
-                    Console.WriteLine("============ Start crawling page " + _pageId);
-                    new AbotRepository().CrawWebPage(GetCurrentUrl(), new OnCompleteCallbackDelegate(this.OnCompleteSubjectsCallback), _pageId);
-                }
-            }
         }
 
         public virtual void PostCompleteTask()
@@ -186,7 +188,7 @@ namespace WindowsFormsApp1.Logic
                     filtered += splited[i];
                 }
             }
-            filtered = filtered.Replace("&nbsp;", " ");//.Replace("\r\n", "");
+            filtered = filtered.Replace("&nbsp;", " ");
             if (filtered.StartsWith("\n"))
             {
                 filtered = filtered.Substring(1);
